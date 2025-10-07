@@ -2,7 +2,11 @@ from typing import Annotated
 from pydantic import Field
 from agent_framework import ai_function
 
-@ai_function(name="weather_tool", description="Retrieves weather information for any location")
+@ai_function(
+    name="weather_tool", 
+    description="Retrieves weather information for any location",
+    approval_mode="always_require"
+    )
 def get_weather(
     location: Annotated[str, Field(description="The location to get the weather for.")],
 ) -> str:
@@ -30,8 +34,10 @@ agent = AzureOpenAIChatClient(
         tools=get_weather,
     )
     
+#TODO human in the loop
+    
 async def main():
-    response = await agent.run("What is the weather like in Amsterdam?")
-    print(response.text)
+    result = await agent.run("What is the weather like in Amsterdam?")
+    print(result.text)
 
 asyncio.run(main())
